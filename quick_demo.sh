@@ -46,10 +46,10 @@ echo "✅ Registry is running on http://localhost:5001"
 echo ""
 
 # Register first service
-echo "📝 Registering user-service..."
+echo "📝 Registering cart-service..."
 curl -s -X POST http://localhost:5001/register \
   -H "Content-Type: application/json" \
-  -d '{"service": "user-service", "address": "http://localhost:8001"}' | python3 -m json.tool
+  -d '{"service": "cart-service", "address": "http://localhost:8001"}' | python3 -m json.tool
 echo ""
 
 # Register second service
@@ -59,11 +59,11 @@ curl -s -X POST http://localhost:5001/register \
   -d '{"service": "payment-service", "address": "http://localhost:8002"}' | python3 -m json.tool
 echo ""
 
-# Register another instance of user-service
-echo "📝 Registering another user-service instance..."
+# Register another instance of cart-service
+echo "📝 Registering another cart-service instance..."
 curl -s -X POST http://localhost:5001/register \
   -H "Content-Type: application/json" \
-  -d '{"service": "user-service", "address": "http://localhost:8003"}' | python3 -m json.tool
+  -d '{"service": "cart-service", "address": "http://localhost:8003"}' | python3 -m json.tool
 echo ""
 
 # List all services
@@ -71,16 +71,16 @@ echo "📋 Listing all registered services..."
 curl -s http://localhost:5001/services | python3 -m json.tool
 echo ""
 
-# Discover user-service
-echo "🔍 Discovering user-service instances..."
-curl -s http://localhost:5001/discover/user-service | python3 -m json.tool
+# Discover cart-service
+echo "🔍 Discovering cart-service instances..."
+curl -s http://localhost:5001/discover/cart-service | python3 -m json.tool
 echo ""
 
 # Send heartbeat
-echo "💓 Sending heartbeat for user-service..."
+echo "💓 Sending heartbeat for cart-service..."
 curl -s -X POST http://localhost:5001/heartbeat \
   -H "Content-Type: application/json" \
-  -d '{"service": "user-service", "address": "http://localhost:8001"}' | python3 -m json.tool
+  -d '{"service": "cart-service", "address": "http://localhost:8001"}' | python3 -m json.tool
 echo ""
 
 # Wait and show stale service cleanup
@@ -93,7 +93,7 @@ done
 echo ""
 
 echo "🔍 Checking services after timeout..."
-curl -s http://localhost:5001/discover/user-service | python3 -m json.tool
+curl -s http://localhost:5001/discover/cart-service | python3 -m json.tool
 echo ""
 echo "   Notice: Services without heartbeats have been removed!"
 echo ""

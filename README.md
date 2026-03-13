@@ -56,6 +56,37 @@ A **Service Registry** is a database of available service instances in a distrib
 ## 🏗️ Architecture
 
 ```
+
+### Architecture Diagram (Client + Services)
+
+```mermaid
+flowchart LR
+  Client[Client CLI]
+  Registry[Service Registry<br/>Flask :5001]
+  Cart1[Cart Service<br/>Instance A :8001]
+  Cart2[Cart Service<br/>Instance B :8003]
+  Pay1[Payment Service<br/>Instance A :8002]
+  Pay2[Payment Service<br/>Instance B :8004]
+
+  Cart1 -->|Register + Heartbeat| Registry
+  Cart2 -->|Register + Heartbeat| Registry
+  Pay1 -->|Register + Heartbeat| Registry
+  Pay2 -->|Register + Heartbeat| Registry
+
+  Client -->|Discover| Registry
+  Client -->|Call Random Instance| Cart1
+  Client -->|Call Random Instance| Cart2
+  Client -->|Call Random Instance| Pay1
+  Client -->|Call Random Instance| Pay2
+```
+
+## 🧯 Failure Scenarios Covered
+
+- Registry unavailable: services retry registration and heartbeats with exponential backoff, jitter, and a max retry cap. citeturn1search0
+- Stale instances: registry cleans up instances without recent heartbeats.
+- Client-side failures: client retries discovery and fails over to another instance if a call fails.
+- Retry-safe payments: optional `Idempotency-Key` prevents duplicate charges during retries.
+- Kubernetes health checks: readiness probes remove unhealthy pods from service endpoints; liveness probes restart stuck containers. citeturn1search1
 ┌─────────────┐         ┌─────────────────┐         ┌─────────────┐
 │  Service A  │────────▶│ Service Registry │◀────────│  Service B  │
 │ (Port 8001) │ Register│   (Port 5000)    │ Discover│ (Port 8002) │
@@ -92,8 +123,10 @@ Enhanced version with enterprise features.
 - ✅ **Detailed Responses**: Rich JSON responses with metadata
 - ✅ **Service Listing**: View all registered services
 
-### 3. `example_service.py`
-Demo client showing how services interact with the registry.
+### 3. Real Services + Client
+- `cart_service.py` - Add-to-cart API with in-memory cart storage
+- `payment_service.py` - Payment API with mock charge + status endpoints
+- `client.py` - Discovers a service and calls a random instance
 
 ### 4. Kubernetes/Minikube Deployment
 - **Dockerfile** - Container image for the registry
@@ -148,6 +181,46 @@ python3 service_registry_improved.py
 ```
 
 The registry will start on `http://localhost:5001`
+
+#### Running Real Services (2 instances each)
+
+Terminal 1:
+```bash
+python3 cart_service.py --port 8001
+```
+
+Terminal 2:
+```bash
+python3 cart_service.py --port 8003
+```
+
+Terminal 3:
+```bash
+python3 payment_service.py --port 8002
+```
+
+Terminal 4:
+```bash
+python3 payment_service.py --port 8004
+```
+
+#### Client Discovery + Random Instance Call
+
+```bash
+# Add to cart via a random cart-service instance
+python3 client.py cart-service /cart/add --method POST --json '{"user_id":"u1","item_id":"sku-1","quantity":2}'
+
+# Fetch cart from a random cart-service instance
+python3 client.py cart-service /cart/u1
+
+# Charge payment via a random payment-service instance
+python3 client.py payment-service /payment/charge --method POST --json '{"user_id":"u1","amount":19.99,"method":"card"}' --idempotency-key "charge-u1-1"
+```
+
+## 📦 Deliverables
+
+- GitHub repo (this project)
+- Architecture diagram (Mermaid in this README and in `ARCHITECTURE.md`)
 
 ### Option 2: Kubernetes/Minikube (Production-like Environment)
 

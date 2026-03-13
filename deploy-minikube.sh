@@ -71,7 +71,7 @@ echo ""
 
 # Wait for services to be ready
 echo -e "${BLUE}7. Waiting for services to be ready...${NC}"
-kubectl wait --for=condition=ready pod -l app=user-service --timeout=60s
+kubectl wait --for=condition=ready pod -l app=cart-service --timeout=60s
 kubectl wait --for=condition=ready pod -l app=payment-service --timeout=60s
 echo -e "   ${GREEN}✓${NC} All services are ready"
 echo ""
@@ -97,12 +97,12 @@ echo ""
 echo "   # List services"
 echo "   curl http://$MINIKUBE_IP:30001/services"
 echo ""
-echo "   # Discover user-service"
-echo "   curl http://$MINIKUBE_IP:30001/discover/user-service"
+echo "   # Discover cart-service"
+echo "   curl http://$MINIKUBE_IP:30001/discover/cart-service"
 echo ""
 echo "📝 View Logs:"
 echo "   kubectl logs -l app=service-registry -f"
-echo "   kubectl logs -l app=user-service -f"
+echo "   kubectl logs -l app=cart-service -f"
 echo ""
 echo "🧹 Cleanup:"
 echo "   kubectl delete -f k8s/"

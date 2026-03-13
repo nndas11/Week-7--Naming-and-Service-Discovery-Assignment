@@ -70,7 +70,7 @@ curl http://localhost:5001/health
 ### Step 5: Deploy Example Services
 
 ```bash
-# Deploy user-service and payment-service
+# Deploy cart-service and payment-service
 kubectl apply -f k8s/example-service-deployment.yaml
 
 # Check all pods
@@ -78,8 +78,8 @@ kubectl get pods
 
 # You should see:
 # - service-registry-xxx (1 pod)
-# - user-service-xxx (2 pods)
-# - payment-service-xxx (1 pod)
+# - cart-service-xxx (2 pods)
+# - payment-service-xxx (2 pods)
 ```
 
 ### Step 6: Test Service Discovery
@@ -91,10 +91,10 @@ kubectl port-forward service/service-registry 5001:5001
 # In another terminal, test the API
 curl http://localhost:5001/services
 
-# Discover user-service
-curl http://localhost:5001/discover/user-service
+# Discover cart-service
+curl http://localhost:5001/discover/cart-service
 
-# You should see 2 instances of user-service!
+# You should see 2 instances of cart-service!
 ```
 
 ## 🔍 Monitoring and Debugging
@@ -106,7 +106,7 @@ curl http://localhost:5001/discover/user-service
 kubectl logs -l app=service-registry -f
 
 # User service logs
-kubectl logs -l app=user-service -f
+kubectl logs -l app=cart-service -f
 
 # Specific pod logs
 kubectl logs <pod-name>
@@ -212,11 +212,11 @@ curl http://localhost:5001/services
 ### Scenario 2: Pod Scaling
 
 ```bash
-# Scale user-service to 3 replicas
-kubectl scale deployment user-service --replicas=3
+# Scale cart-service to 3 replicas
+kubectl scale deployment cart-service --replicas=3
 
 # Watch new instances register
-curl http://localhost:5001/discover/user-service
+curl http://localhost:5001/discover/cart-service
 
 # Scale down to 1
 kubectl scale deployment user-service --replicas=1
@@ -228,13 +228,13 @@ kubectl scale deployment user-service --replicas=1
 
 ```bash
 # Delete a pod
-kubectl delete pod <user-service-pod-name>
+kubectl delete pod <cart-service-pod-name>
 
 # Kubernetes will create a new one
 kubectl get pods -w
 
 # New pod will register automatically
-curl http://localhost:5001/discover/user-service
+curl http://localhost:5001/discover/cart-service
 ```
 
 ### Scenario 4: Rolling Update
@@ -245,10 +245,10 @@ eval $(minikube docker-env)
 docker build -t service-registry:v2 .
 
 # Update deployment
-kubectl set image deployment/user-service user-service=service-registry:v2
+kubectl set image deployment/cart-service cart-service=service-registry:v2
 
 # Watch rolling update
-kubectl rollout status deployment/user-service
+kubectl rollout status deployment/cart-service
 ```
 
 ## 🔧 Troubleshooting
@@ -282,7 +282,7 @@ kubectl run -it --rm debug --image=curlimages/curl --restart=Never -- \
 
 ```bash
 # Check if registry is accessible from pods
-kubectl exec -it <user-service-pod> -- \
+kubectl exec -it <cart-service-pod> -- \
   curl http://service-registry:5001/health
 
 # Check environment variables

@@ -43,6 +43,29 @@
 └───────────────┘     └───────────────┘     └───────────────┘
 ```
 
+## 🧭 High-Level Architecture (Client + Services)
+
+```mermaid
+flowchart LR
+  Client[Client CLI]
+  Registry[Service Registry<br/>Flask :5001]
+  Cart1[Cart Service<br/>Instance A :8001]
+  Cart2[Cart Service<br/>Instance B :8003]
+  Pay1[Payment Service<br/>Instance A :8002]
+  Pay2[Payment Service<br/>Instance B :8004]
+
+  Cart1 -->|Register + Heartbeat| Registry
+  Cart2 -->|Register + Heartbeat| Registry
+  Pay1 -->|Register + Heartbeat| Registry
+  Pay2 -->|Register + Heartbeat| Registry
+
+  Client -->|Discover| Registry
+  Client -->|Call Random Instance| Cart1
+  Client -->|Call Random Instance| Cart2
+  Client -->|Call Random Instance| Pay1
+  Client -->|Call Random Instance| Pay2
+```
+
 ## 🔄 Request Flow Diagrams
 
 ### 1. Service Registration Flow
