@@ -55,7 +55,7 @@ A **Service Registry** is a database of available service instances in a distrib
 
 ## 🏗️ Architecture
 
-```
+For more architecture diagrams and deeper explanations, see [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ### Architecture Diagram (Client + Services)
 
@@ -82,11 +82,15 @@ flowchart LR
 
 ## 🧯 Failure Scenarios Covered
 
-- Registry unavailable: services retry registration and heartbeats with exponential backoff, jitter, and a max retry cap. citeturn1search0
+- Registry unavailable: services retry registration and heartbeats with exponential backoff, jitter, and a max retry cap.
 - Stale instances: registry cleans up instances without recent heartbeats.
 - Client-side failures: client retries discovery and fails over to another instance if a call fails.
 - Retry-safe payments: optional `Idempotency-Key` prevents duplicate charges during retries.
-- Kubernetes health checks: readiness probes remove unhealthy pods from service endpoints; liveness probes restart stuck containers. citeturn1search1
+- Kubernetes health checks: readiness probes remove unhealthy pods from service endpoints; liveness probes restart stuck containers.
+
+### Legacy ASCII Diagram (Registry Overview)
+
+```text
 ┌─────────────┐         ┌─────────────────┐         ┌─────────────┐
 │  Service A  │────────▶│ Service Registry │◀────────│  Service B  │
 │ (Port 8001) │ Register│   (Port 5000)    │ Discover│ (Port 8002) │
