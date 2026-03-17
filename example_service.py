@@ -175,7 +175,7 @@ def demo_service_discovery():
             return
     except Exception as e:
         print(f"✗ Cannot connect to registry: {e}")
-        print("Make sure the registry is running on port 5000")
+        print("Make sure the registry is running on port 5001")
         return
     
     # List all services

@@ -7,7 +7,7 @@
 │                     Service Registry System                      │
 │                                                                   │
 │  ┌────────────────────────────────────────────────────────┐    │
-│  │              Service Registry (Port 5000)               │    │
+│  │              Service Registry (Port 5001)               │    │
 │  │                                                          │    │
 │  │  ┌──────────────────────────────────────────────────┐  │    │
 │  │  │         In-Memory Registry Storage               │  │    │

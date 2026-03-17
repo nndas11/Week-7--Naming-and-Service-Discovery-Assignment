@@ -26,7 +26,7 @@ def discover(service):
     # Return list of addresses for this service
     return jsonify(registry.get(service, []))
 
-app.run(port=5000)
+app.run(port=5001)
 ```
 
 ### What Works Well ✅

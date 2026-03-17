@@ -2,48 +2,6 @@
 
 A simple but functional service registry implementation for understanding service discovery in distributed systems.
 
-## 🚀 Quick Start
-
-### Prerequisites
-
-Python 3.8 or higher
-
-### Installation
-
-1. **Clone the repository:**
-```bash
-git clone https://github.com/ranjanr/ServiceRegistry.git
-cd ServiceRegistry
-```
-
-2. **Create a virtual environment (Python 3.13+):**
-```bash
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. **Install dependencies:**
-```bash
-pip install -r requirements.txt
-```
-
-### Running the Service Registry
-
-```bash
-# Make sure virtual environment is activated
-source venv/bin/activate
-
-# Start the registry
-python3 service_registry_improved.py
-```
-
-You should see:
-```
-Service Registry starting on port 5000...
-Heartbeat timeout: 30s
-Cleanup interval: 10s
-```
-
 ## 📚 What is a Service Registry?
 
 A **Service Registry** is a database of available service instances in a distributed system. It enables:
@@ -93,7 +51,7 @@ flowchart LR
 ```text
 ┌─────────────┐         ┌─────────────────┐         ┌─────────────┐
 │  Service A  │────────▶│ Service Registry │◀────────│  Service B  │
-│ (Port 8001) │ Register│   (Port 5000)    │ Discover│ (Port 8002) │
+│ (Port 8001) │ Register│   (Port 5001)    │ Discover│ (Port 8002) │
 └─────────────┘         └─────────────────┘         └─────────────┘
       │                          │                          │
       └──────── Heartbeat ───────┘                          │
@@ -219,6 +177,71 @@ python3 client.py cart-service /cart/u1
 
 # Charge payment via a random payment-service instance
 python3 client.py payment-service /payment/charge --method POST --json '{"user_id":"u1","amount":19.99,"method":"card"}' --idempotency-key "charge-u1-1"
+```
+
+### ✅ Verification Checklist (Assignment Requirements)
+
+Use the steps below to verify each requirement end-to-end on your machine.
+
+#### 1) Run the Registry
+
+```bash
+python3 service_registry_improved.py
+```
+
+Expected logs:
+```
+Service Registry starting on port 5001...
+Heartbeat timeout: 30s
+Cleanup interval: 10s
+```
+
+If you see **"Address already in use"**, stop the process using port 5001:
+```bash
+lsof -i :5001
+kill <PID>
+```
+
+#### 2) Run 2 Service Instances (Cart + Payment)
+
+Cart service:
+```bash
+python3 cart_service.py --port 8001
+python3 cart_service.py --port 8003
+```
+
+Payment service:
+```bash
+python3 payment_service.py --port 8002
+python3 payment_service.py --port 8004
+```
+
+#### 3) Verify Registration with the Registry
+
+```bash
+curl http://localhost:5001/discover/cart-service
+curl http://localhost:5001/discover/payment-service
+```
+
+Expected: each response shows **2 instances** in `instances`.
+
+#### 4) Client Discovers Service
+
+The client uses the registry to discover instances automatically:
+```bash
+python3 client.py cart-service /cart/u1
+```
+
+#### 5) Client Calls a Random Instance
+
+```bash
+python3 client.py cart-service /cart/add --method POST --json '{"user_id":"u1","item_id":"sku-1","quantity":2}'
+python3 client.py payment-service /payment/charge --method POST --json '{"user_id":"u1","amount":19.99,"method":"card"}' --idempotency-key "charge-u1-1"
+```
+
+Expected output includes the **instance URL** called, e.g.:
+```
+Called http://localhost:8001/cart/add -> 200
 ```
 
 ## 📦 Deliverables
