@@ -248,6 +248,11 @@ Called http://localhost:8001/cart/add -> 200
 
 - GitHub repo (this project)
 - Architecture diagram (Mermaid in this README and in `ARCHITECTURE.md`)
+- Demo video
+
+## 🎥 Demo Video
+
+- Link: https://drive.google.com/drive/folders/1qbk1O39Hn_wXFV8FMhJPjxPsERXd5RBA?usp=sharing
 
 ### Option 2: Kubernetes/Minikube (Production-like Environment)
 
